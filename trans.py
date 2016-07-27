@@ -1,4 +1,4 @@
-
+# -*- coding: utf-8 -*-
 import pymongo
 
 from settings import MongoConfig
@@ -7,7 +7,6 @@ import pdb
 
 
 
-@singleton
 class MongoDB(object):
 
     _instance = None
@@ -24,7 +23,6 @@ class MongoDB(object):
             self._currentDB = db
         except:
             pass
-        pdb.set_trace()
 
     def getConn(self):
         return self._instance
@@ -33,15 +31,37 @@ class MongoDB(object):
         return self._currentDB
 
     def searchAll(self,collection=None):
-        return self._currentDB[collection].find()
+        return self.getDB()[collection].find()
+
+    def insertorupdateItem(self,collection,item):
+        search =  self.getDB()[collection].find(
+            {
+                'ref': item['ref'],
+                'type': item['type']
+
+            }
+        )
+        if search:
+            pass
+
+        else:
+            pass
+
+        for i in search:
+
+            print i
+
 
 
     def closeDB(self):
-        self.instance.close()
+        self._instance.close()
 
 
-
+item = {'ref':'110/000141',
+        'type': u'Autorización de Convenios Internacionales'
+        }
 
 prueba = MongoDB()
 prueba.connDB()
+prueba.insertorupdateItem('test',item)
 
