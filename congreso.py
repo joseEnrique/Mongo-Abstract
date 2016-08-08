@@ -7,7 +7,7 @@ import pdb
 class Congress(object):
     _conn = None
     def __init__(self):
-        self._conn= MongoDBconn()
+        self._conn = MongoDBconn()
 
     def _getCollection(self,collection):
         return self._conn.getDB()[collection]
