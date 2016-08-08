@@ -44,8 +44,4 @@ class MongoDBconn(object):
 
 
 
-item = {'ref':'110/000141',
-        'type': u'Autorización de Convenios Internacionales'
-        }
-
 

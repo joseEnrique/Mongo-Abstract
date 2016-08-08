@@ -15,31 +15,46 @@ class Congress(object):
     def searchAll(self,collection=None):
         return self._getCollection(collection).find()
 
-
-    def getGroupfrommember(self, collection= "miembros", name = None):
+    def getMember(self,collection= "miembros", name = None):
         search = self._getCollection(collection).find_one({
             'nombre': name
         })
+        try:
+            return search
+        except:
+            return None
+
+    def getGroupfrommember(self, collection= "miembros", name = None):
+        search = self.getMember(collection,name)
+
         return search['grupo']
 
+
     def getGroup(self, collection = "grupos", name = None):
-        regx = re.compile(name, re.IGNORECASE)
-        search = self.searchAll(collection)
-        for field in search:
-            pdb.set_trace()
-
-            camposnombre = field['nombre'].split(' ')
-            regexstring = camposnombre[0]+" .*? "+concatlist(camposnombre[1:])
-            if re.search(regexstring, name,re.IGNORECASE ):
-
-                pdb.set_trace()
-
-
+        acronimo = None
+        if re.search("la izquierda plural",name,re.IGNORECASE):
+            acronimo = u'GIP'
+        elif re.search("popular",name,re.IGNORECASE):
+            acronimo = u'GP'
+        elif re.search("vasco", name, re.IGNORECASE):
+            acronimo = u'GV (EAJ-PNV)'
+        elif re.search("socialista", name, re.IGNORECASE):
+            acronimo = u'GS'
+        elif re.search("mixto", name, re.IGNORECASE):
+            acronimo = u'GMx'
+        elif re.search("converg(e|è)ncia", name, re.IGNORECASE):
+            acronimo = u'GC-CiU'
+        elif re.search("progreso", name, re.IGNORECASE):
+            acronimo = u'GUPyD'
+        search = self._getCollection(collection).find_one({
+            'acronimo': acronimo
+        })
+        return search
 
     def typeAutor(self, name):
-        if self.getGroupfrommember(name):
+        if self.getMember(name=name):
             return "diputado"
-        elif self.getGroup(name):
+        elif self.getGroup(name=name):
             return "grupo"
         else:
             return "otro"
@@ -67,17 +82,16 @@ class Congress(object):
 
 def concatlist(list):
     if list:
-        return ''.join(elem for elem in list)
+        return ' '.join(elem for elem in list)
     else:
-        return ''
+        return ' '
 
 
-
-
-
-
+item = {'ref': '110/000141',
+        'type': u'Autorización de Convenios Internacionales'
+        }
 
 a = Congress()
-a.getGroup(name="Grupo Parlamentario de IU, ICV-EUiA, CHA: La Izquierda Plural")
-
+b =a.typeAutor(name="Macias i Arau, Pere")
+pdb.set_trace()
 
