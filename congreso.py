@@ -13,7 +13,7 @@ class Congress(object):
         return self._conn.getDB()[collection]
 
     def searchAll(self,collection=None):
-        return self._getCollection(collection).find()
+        return [ element for element in self._getCollection(collection).find()]
 
     def getMember(self,collection= "diputados", name = None):
         search = self._getCollection(collection).find_one({
