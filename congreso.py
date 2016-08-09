@@ -15,7 +15,7 @@ class Congress(object):
     def searchAll(self,collection=None):
         return self._getCollection(collection).find()
 
-    def getMember(self,collection= "miembros", name = None):
+    def getMember(self,collection= "diputados", name = None):
         search = self._getCollection(collection).find_one({
             'nombre': name
         })
@@ -24,31 +24,43 @@ class Congress(object):
         except:
             return None
 
-    def getGroupfrommember(self, collection= "miembros", name = None):
+    def getGroupfrommember(self, collection= "diputados", name = None):
         search = self.getMember(collection,name)
 
-        return search['grupo']
+        return self.getGroup(name=search['grupo'])
 
 
     def getGroup(self, collection = "grupos", name = None):
+        #sebusca por acronimo
         acronimo = None
-        if re.search("la izquierda plural",name,re.IGNORECASE):
+        if re.search("la izquierda plural",name,re.IGNORECASE)  \
+                or re.search("GIP",name,re.IGNORECASE) :
             acronimo = u'GIP'
-        elif re.search("popular",name,re.IGNORECASE):
+        elif re.search("popular",name,re.IGNORECASE) \
+                or re.search("GP",name,re.IGNORECASE):
             acronimo = u'GP'
-        elif re.search("vasco", name, re.IGNORECASE):
+        elif re.search("vasco", name, re.IGNORECASE) \
+                or re.search("EAJ-PNV",name,re.IGNORECASE):
             acronimo = u'GV (EAJ-PNV)'
-        elif re.search("socialista", name, re.IGNORECASE):
+        elif re.search("socialista", name, re.IGNORECASE) \
+                or re.search("GS",name,re.IGNORECASE):
             acronimo = u'GS'
-        elif re.search("mixto", name, re.IGNORECASE):
+        elif re.search("mixto", name, re.IGNORECASE) \
+            or re.search("GMx",name,re.IGNORECASE):
             acronimo = u'GMx'
-        elif re.search("converg(e|è)ncia", name, re.IGNORECASE):
+        elif re.search("converg", name, re.IGNORECASE) \
+            or re.search("GC-CiU",name,re.IGNORECASE):
             acronimo = u'GC-CiU'
-        elif re.search("progreso", name, re.IGNORECASE):
+        elif re.search("progreso", name, re.IGNORECASE) \
+                or re.search("GUPyD",name,re.IGNORECASE):
             acronimo = u'GUPyD'
-        search = self._getCollection(collection).find_one({
+        try:
+            search = self._getCollection(collection).find_one({
             'acronimo': acronimo
-        })
+            })
+        except:
+            return None
+
         return search
 
     def typeAutor(self, name):
@@ -87,11 +99,5 @@ def concatlist(list):
         return ' '
 
 
-item = {'ref': '110/000141',
-        'type': u'Autorización de Convenios Internacionales'
-        }
 
-a = Congress()
-b =a.typeAutor(name="Macias i Arau, Pere")
-pdb.set_trace()
 

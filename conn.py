@@ -39,7 +39,7 @@ class MongoDBconn(object):
         return self._currentDB
 
     def closeDB(self):
-        self._instance.close()
+        self._client.close()
         self.__instance = None
 
 
