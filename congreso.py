@@ -72,31 +72,86 @@ class Congress(object):
             return "otro"
 
 
-    def insertorupdateItem(self, collection, item):
-        search = self._getCollection(collection).find(
+    def getInitiative(self, collection="iniciativas", ref = None, tipotexto= None, titulo = None):
+        search = self._getCollection(collection).find_one(
             {
-                'ref': item['ref'],
+                'ref': ref,
+                'tipotexto': tipotexto,
+                'titulo': titulo
+            }
+        )
+
+        return search
+
+
+    def updateorinsertInitiative(self, collection="iniciativas", type = "insert", item = None):
+        #metodo para el pipeline
+        if type is 'insert':
+            self._insertInitiative(collection,item)
+            #update
+        elif type is 'update':
+            self._updateInitiative(collection,item)
+            #inserta
+        else:
+            print "Not type accepted"
+            raise
+
+    def _insertInitiative(self,collection,item):
+        self._getCollection(collection=collection).insert(dict(item))
+
+    def _updateInitiative(self,collection,item):
+        coll = self._getCollection(collection=collection)
+        coll.update_one({
+                 'ref': item['ref'],
                 'tipotexto': item['tipotexto'],
                 'titulo': item['titulo']
 
-            }
+
+        },{
+            '$set': {
+            'ref': item['ref'],
+            'titulo': item['titulo'],
+            'autor_diputado': item['autor_diputado'],
+            'autor_grupo': item['autor_grupo'],
+            'autor_otro': item['autor_otro'],
+            'url': item['url'],
+            'content': item['content'],
+            'tipo': item['tipo'],
+            'tipotexto': item['tipotexto'],
+            'tramitacion': item['tramitacion'],
+            'restramitacion': item['restramitacion'],
+            'fecha': item['fecha'],
+            'lugar': item['lugar'],
+
+                    }
+            ,}
         )
-        if search:
-            pass
 
+
+    def isDiffinitiative(self, collection="iniciativas", item = None, search = None):
+
+
+        if search:#existe
+            return not self.sameInitiative(item,search)
         else:
-            pass
+            return False
 
-        for i in search:
+    def sameInitiative(self,item,search):
+        if len(item.keys()) != len(search.keys())-1: # se descarta el content
+            return False
+        else:
+            for key, value in search.iteritems():
+                for ikey,ivalue in item.iteritems():
+                    if key == ikey:
+                        if value !=  ivalue and  key is not 'content':
 
-            print i
+                            return False
+            return True
 
 
-def concatlist(list):
-    if list:
-        return ' '.join(elem for elem in list)
-    else:
-        return ' '
+
+
+
 
 
 
