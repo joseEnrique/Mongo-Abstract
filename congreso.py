@@ -113,7 +113,6 @@ class Congress(object):
             'autor_grupo': item['autor_grupo'],
             'autor_otro': item['autor_otro'],
             'url': item['url'],
-            'content': item['content'],
             'tipo': item['tipo'],
             'tramitacion': item['tramitacion'],
             'restramitacion': item['restramitacion'],
@@ -125,6 +124,51 @@ class Congress(object):
                     }
             ,}
         )
+
+
+
+    def updateorinsertInitiativecontent(self, collection="iniciativas", type = "insert", item = None):
+        #metodo para el pipeline
+        if type is 'insert':
+            self._insertInitiative(collection,item)
+            #update
+        elif type is 'update':
+            self._updateInitiativecontent(collection,item)
+            #inserta
+        else:
+            print "Not type accepted"
+            raise
+
+
+
+    def _updateInitiativecontent(self,collection,item):
+        coll = self._getCollection(collection=collection)
+        coll.update_one({
+                 'ref': item['ref'],
+                'tipotexto': item['tipotexto'],
+
+
+        },{
+            '$set': {
+            'titulo': item['titulo'],
+            'autor_diputado': item['autor_diputado'],
+            'autor_grupo': item['autor_grupo'],
+            'autor_otro': item['autor_otro'],
+            'url': item['url'],
+            'tipo': item['tipo'],
+            'tramitacion': item['tramitacion'],
+            'restramitacion': item['restramitacion'],
+            'fecha': item['fecha'],
+            'lugar': item['lugar'],
+            'countcontent': item['countcontent'],
+            'fechafin': item['fechafin'],
+            'content': item['content'],
+
+                    }
+            ,}
+        )
+
+
 
 
     def isDiffinitiative(self, collection="iniciativas", item = None, search = None):
@@ -147,6 +191,99 @@ class Congress(object):
                             return False
             return True
 
+
+    def updateorinsertAdmenment(self, collection="iniciativas",  item = None ,search = None):
+        #metodo para el pipeline
+
+        self._insertAdmendment(collection,item,search)
+            #update
+
+
+    def _insertAdmendment(self,collection,item,search):
+        if item["autor_diputado"]:
+            autor = item["autor_diputado"]
+            autor1 = item["autor_grupo"]
+        elif item ["autor_grupo"]:
+            autor = item["autor_grupo"]
+            autor1 = item["autor_grupo"]
+        else:
+            autor = item["autor_otro"]
+            autor1 = item["autor_otro"]
+
+        if not search:
+            insert ={
+                'ref': item['ref'],
+                'tipotexto':item['tipotexto'],
+                'tipo':item['tipo'],
+                'autor_grupo': autor1,
+                'fecha': item["fecha"],
+                'fechafin': item["fechafin"],
+                'url': item['url'],
+                'lugar': item['lugar'],
+                'tramitacion': item['tramitacion'],
+                'restramitacion': item['restramitacion'],
+                'contenido':[{"autor": autor, "contenido":item["content"]}]
+
+
+            }
+            self._getCollection(collection=collection).insert(insert)
+        else:
+            self._updateAdmendment(collection,item,search)
+
+    def _updateAdmendment(self,collection,item,search):
+        if item["autor_diputado"]:
+            autor = item["autor_diputado"]
+            autor1 = item["autor_grupo"]
+        elif item ["autor_grupo"]:
+            autor = item["autor_grupo"]
+            autor1 = item["autor_grupo"]
+        else:
+            autor = item["autor_otro"]
+            autor1 = item["autor_otro"]
+        coll = self._getCollection(collection=collection)
+        append = {"autor": autor, "contenido":item["content"]}
+        before = search["contenido"]
+        before.append(append)
+        after = before
+
+        coll.update_one({
+                'ref': item['ref'],
+                'tipotexto': item['tipotexto'],
+                'autor_grupo' : autor1
+
+
+        },{
+            '$set': {
+            'contenido':after
+                    }
+            ,}
+        )
+
+    def getAdmendment(self, collection="iniciativas", ref = None, tipotexto= None, autor = None):
+        search = self._getCollection(collection).find_one(
+        {
+                'ref': ref,
+                'tipotexto': tipotexto,
+                'autor_grupo': autor
+        }
+        )
+
+        return search
+
+
+    def isDiffadmendment(self, collection="iniciativas", item = None, search = None):
+        if search:#existe
+            return not self.sameAdmendment(item,search)
+        else:
+            return False
+
+    def sameAdmendment(self,item,search):
+
+        if search:
+            for a in search['contenido']:
+                pdb.set_trace()
+        else:
+            return False
 
 
 
