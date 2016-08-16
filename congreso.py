@@ -104,12 +104,10 @@ class Congress(object):
         coll.update_one({
                  'ref': item['ref'],
                 'tipotexto': item['tipotexto'],
-                'titulo': item['titulo']
 
 
         },{
             '$set': {
-            'ref': item['ref'],
             'titulo': item['titulo'],
             'autor_diputado': item['autor_diputado'],
             'autor_grupo': item['autor_grupo'],
@@ -117,11 +115,12 @@ class Congress(object):
             'url': item['url'],
             'content': item['content'],
             'tipo': item['tipo'],
-            'tipotexto': item['tipotexto'],
             'tramitacion': item['tramitacion'],
             'restramitacion': item['restramitacion'],
             'fecha': item['fecha'],
             'lugar': item['lugar'],
+            'countcontent': item['countcontent'],
+            'fechafin': item['fechafin'],
 
                     }
             ,}
