@@ -209,7 +209,6 @@ class Congress(object):
         else:
             autor = item["autor_otro"]
             autor1 = item["autor_otro"]
-
         if not search:
             insert ={
                 'ref': item['ref'],
@@ -243,21 +242,21 @@ class Congress(object):
         coll = self._getCollection(collection=collection)
         append = {"autor": autor, "contenido":item["content"]}
         before = search["contenido"]
-        before.append(append)
-        after = before
 
-        coll.update_one({
-                'ref': item['ref'],
-                'tipotexto': item['tipotexto'],
-                'autor_grupo' : autor1
+        if append not in before:
+            before.append(append)
+            coll.update_one({
+                        'ref': item['ref'],
+                        'tipotexto': item['tipotexto'],
+                        'autor_grupo' : autor1
 
 
-        },{
-            '$set': {
-            'contenido':after
-                    }
-            ,}
-        )
+                },{
+                    '$set': {
+                    'contenido':before
+                            }
+                    ,}
+                )
 
     def getAdmendment(self, collection="iniciativas", ref = None, tipotexto= None, autor = None):
         search = self._getCollection(collection).find_one(
