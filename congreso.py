@@ -162,7 +162,7 @@ class Congress(object):
             'lugar': item['lugar'],
             'countcontent': item['countcontent'],
             'fechafin': item['fechafin'],
-            'content': item['content'],
+            'contenido': item['contenido'],
 
                     }
             ,}
@@ -186,7 +186,7 @@ class Congress(object):
             for key, value in search.iteritems():
                 for ikey,ivalue in item.iteritems():
                     if key == ikey:
-                        if value !=  ivalue and  key is not 'content':
+                        if value !=  ivalue and  key is not 'contenido':
 
                             return False
             return True
@@ -200,28 +200,22 @@ class Congress(object):
 
 
     def _insertAdmendment(self,collection,item,search):
-        if item["autor_diputado"]:
-            autor = item["autor_diputado"]
-            autor1 = item["autor_grupo"]
-        elif item ["autor_grupo"]:
-            autor = item["autor_grupo"]
-            autor1 = item["autor_grupo"]
-        else:
-            autor = item["autor_otro"]
-            autor1 = item["autor_otro"]
+
         if not search:
             insert ={
                 'ref': item['ref'],
                 'tipotexto':item['tipotexto'],
                 'tipo':item['tipo'],
-                'autor_grupo': autor1,
+                'autor_grupo': item["autor_grupo"],
+                'autor_diputado':item["autor_diputado"],
+                'autor_otro' : item["autor_otro"],
                 'fecha': item["fecha"],
                 'fechafin': item["fechafin"],
                 'url': item['url'],
                 'lugar': item['lugar'],
                 'tramitacion': item['tramitacion'],
                 'restramitacion': item['restramitacion'],
-                'contenido':[{"autor": autor, "contenido":item["content"]}]
+                'contenido':[item["contenido"]]
 
 
             }
@@ -230,30 +224,31 @@ class Congress(object):
             self._updateAdmendment(collection,item,search)
 
     def _updateAdmendment(self,collection,item,search):
-        if item["autor_diputado"]:
-            autor = item["autor_diputado"]
-            autor1 = item["autor_grupo"]
-        elif item ["autor_grupo"]:
-            autor = item["autor_grupo"]
-            autor1 = item["autor_grupo"]
-        else:
-            autor = item["autor_otro"]
-            autor1 = item["autor_otro"]
-        coll = self._getCollection(collection=collection)
-        append = {"autor": autor, "contenido":item["content"]}
-        before = search["contenido"]
 
+        autor = item["autor_grupo"]
+
+        coll = self._getCollection(collection=collection)
+        append = item["contenido"]
+        before = search["contenido"]
+        beforeautor = search["autor_diputado"]
+        beforeotro = search["autor_otro"]
+        if item["autor_diputado"]:
+            beforeautor = beforeautor + item["autor_diputado"]
+        if item["autor_otro"]:
+            beforeotro=beforeotro+item["autor_otro"]
         if append not in before:
             before.append(append)
             coll.update_one({
                         'ref': item['ref'],
                         'tipotexto': item['tipotexto'],
-                        'autor_grupo' : autor1
+                        'autor_grupo' : autor
 
 
                 },{
                     '$set': {
-                    'contenido':before
+                    'autor_diputado': list(set(beforeautor)),
+                    'autor_otro': list(set(beforeotro)),
+                    'contenido':before,
                             }
                     ,}
                 )
