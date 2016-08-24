@@ -284,6 +284,46 @@ class Congress(object):
         else:
             return False
 
+    def updateorinsertFinishtextorResponse(self, collection="iniciativas", type="insert", item=None):
+            # metodo para el pipeline
+        if type is 'insert':
+            self._insertFinishsTextorResponse(collection, item)
+                # update
+        elif type is 'update':
+            self._updateFinishTextorResponse(collection, item)
+                # inserta
+        else:
+            print "Not type accepted"
+            raise
+
+    def _insertFinishsTextorResponse(self, collection, item):
+        self._getCollection(collection=collection).insert(dict(item))
+
+    def _updateFinishTextorResponse(self, collection, item):
+        coll = self._getCollection(collection=collection)
+        coll.update_one({
+                'ref': item['ref'],
+                'tipotexto': item['tipotexto'],
+
+            }, {
+                '$set': {
+                    'titulo': item['titulo'],
+                    'autor_diputado': item['autor_diputado'],
+                    'autor_grupo': item['autor_grupo'],
+                    'autor_otro': item['autor_otro'],
+                    'url': item['url'],
+                    'tipo': item['tipo'],
+                    'tramitacion': item['tramitacion'],
+                    'restramitacion': item['restramitacion'],
+                    'fecha': item['fecha'],
+                    'lugar': item['lugar'],
+                    'fechafin': item['fechafin'],
+                    'contenido': item['contenido']
+
+                }
+                ,}
+            )
+
 
 
 
