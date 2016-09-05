@@ -205,6 +205,7 @@ class Congress(object):
             insert ={
                 'ref': item['ref'],
                 'tipotexto':item['tipotexto'],
+                'titulo': item['titulo'],
                 'tipo':item['tipo'],
                 'autor_grupo': item["autor_grupo"],
                 'autor_diputado':item["autor_diputado"],
@@ -264,20 +265,6 @@ class Congress(object):
 
         return search
 
-
-    def isDiffadmendment(self, collection="iniciativas", item = None, search = None):
-        if search:#existe
-            return not self.sameAdmendment(item,search)
-        else:
-            return False
-
-    def sameAdmendment(self,item,search):
-
-        if search:
-            for a in search['contenido']:
-                pdb.set_trace()
-        else:
-            return False
 
     def updateorinsertFinishtextorResponse(self, collection="iniciativas", type="insert", item=None):
             # metodo para el pipeline
