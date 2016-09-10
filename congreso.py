@@ -244,6 +244,51 @@ class Congress(object):
                 ,}
             )
 
+    def getMember(self, collection="diputados", name = None):
+        search = self._getCollection(collection).find_one(
+            {
+                'nombre': name,
+            }
+        )
+        return search
+
+
+    def updateorinsertMember(self, collection="diputados", type = "insert", item = None):
+        #metodo para el pipeline
+        if type is 'insert':
+            self._insertMember(collection,item)
+            #update
+        elif type is 'update':
+            self._updateMember(collection,item)
+            #inserta
+        else:
+            print "Not type accepted"
+            raise
+
+    def _insertMember(self, collection, item):
+        self._getCollection(collection=collection).insert(dict(item))
+
+    def _updateMember(self, collection, item):
+        coll = self._getCollection(collection=collection)
+        coll.update_one({
+            'nombre': item['nombre'],
+
+
+        }, {
+            '$set': {
+                'url': item['url'],
+                'grupo': item['grupo'],
+                'correo': item['correo'],
+                'web': item['web'],
+                'url': item['url'],
+                'twitter': item['twitter'],
+                'fecha_alta': item['fecha_alta'],
+                'fecha_baja': item['fecha_baja'],
+                'imagen': item['imagen']
+
+            }
+        })
+
 
 
 
