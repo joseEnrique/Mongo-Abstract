@@ -80,7 +80,6 @@ class Congress(object):
                 'titulo': titulo
             }
         )
-
         return search
 
 
@@ -115,10 +114,8 @@ class Congress(object):
             'url': item['url'],
             'tipo': item['tipo'],
             'tramitacion': item['tramitacion'],
-            'restramitacion': item['restramitacion'],
             'fecha': item['fecha'],
             'lugar': item['lugar'],
-            'countcontent': item['countcontent'],
             'fechafin': item['fechafin'],
 
                     }
@@ -157,10 +154,8 @@ class Congress(object):
             'url': item['url'],
             'tipo': item['tipo'],
             'tramitacion': item['tramitacion'],
-            'restramitacion': item['restramitacion'],
             'fecha': item['fecha'],
             'lugar': item['lugar'],
-            'countcontent': item['countcontent'],
             'fechafin': item['fechafin'],
             'contenido': item['contenido'],
 
@@ -215,7 +210,6 @@ class Congress(object):
                 'url': item['url'],
                 'lugar': item['lugar'],
                 'tramitacion': item['tramitacion'],
-                'restramitacion': item['restramitacion'],
                 'contenido':[item["contenido"]]
 
 
@@ -296,7 +290,6 @@ class Congress(object):
                     'url': item['url'],
                     'tipo': item['tipo'],
                     'tramitacion': item['tramitacion'],
-                    'restramitacion': item['restramitacion'],
                     'fecha': item['fecha'],
                     'lugar': item['lugar'],
                     'fechafin': item['fechafin'],
